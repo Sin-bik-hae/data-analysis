@@ -67,14 +67,14 @@ nrow(sample_bank_del)
 ncol(sample_bank_del)
 
 #0 -> 1로 바꾸기
+
 for(j in 2:ncol(sample_bank_del)){ 
   for(i in 1:nrow(sample_bank_del)){
     if(sample_bank_del[i,j] == 0){
-      sample_bank_del[i,j] = 1
+      sample_bank_del[i,j] = 10
     }
   }
-}  
-
+}
 
 head(sample_bank_del)
 sample_bank_del
