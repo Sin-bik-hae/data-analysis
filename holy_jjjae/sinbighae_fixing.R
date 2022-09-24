@@ -41,8 +41,9 @@ names(n_variable) = names(bank_del)
 n_variable
 
 #sample ver.
-sample_bank_del <- bank_del[sample(nrow(bank_del),100000),]
+sample_bank_del <- bank_del[sample(nrow(bank_del),1000),]
 sample_bank_del
+View(sample_bank_del)
 sum(colSums(sample_bank_del) == 0)
 
 sample_bank_del <- sample_bank_del[colSums(sample_bank_del) != 0]
@@ -51,7 +52,34 @@ ncol(sample_bank_del)
 
 glm_sample_bank_del <- glm(은행활동고객TF ~ ., data = sample_bank_del, family = binomial)
 summary(glm_sample_bank_del)
-corr <- cor(sample_bank_del)
-View(corr)
+
+#multicolinearity
+install.packages("car")
+library(car)
+vif(glm_sample_bank_del) > 10
+sample_bank_del_ <- subset(sample_bank_del, (vif(glm_sample_bank_del) > 10) == T)
+
+if((vif(glm_sample_bank_del) > 10) == T){
+  print(names(glm_sample_bank_del))
+}
+
+#regression``
+glm_sample_bank_del_ <- glm(은행활동고객TF ~ ., data = sample_bank_del_, family = binomial)
+summary(glm_sample_bank_del_)
 
 step_bank <- step(glm_sample_bank_del, direction = "both")
+
+
+#####일단 보류#########
+#use fiited model to predict response values
+sample_bank_del$y_pred <- predict(glm_sample_bank_del, sample_bank_del, type = "response")
+sample_bank_del$y_pred
+View(sample_bank_del)
+names(sample_bank_del)
+
+sample_bank_del_ <- subset(sample_bank_del, y_pred <0.999999999)
+View(sample_bank_del_)
+nrow(sample_bank_del_) 
+
+corr <- cor(sample_bank_del)
+View(corr)
